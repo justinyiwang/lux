@@ -1,6 +1,9 @@
 from .context import lux
 import pytest
 import pandas as pd
+import numpy as np
+from typing import List
+from dataclasses import dataclass
 
 # Suite of test that checks if data_type inferred correctly by Lux
 def test_check_cars():
@@ -24,3 +27,34 @@ def test_check_id():
 	assert "<code>order_id</code> is not visualized since it resembles an ID field." in df._message.to_html()
 	assert "<code>product_id</code> is not visualized since it resembles an ID field." in df._message.to_html()
 	assert "<code>user_id</code> is not visualized since it resembles an ID field." in df._message.to_html()
+
+def test_check_id_no_regex():
+	#rename all column names and rerun data
+	@dataclass
+	class TestCase:
+		name: str
+		ids: List[str] #a set of column 0-indices that should recognizes as id
+	testcases = [
+		TestCase(name='spotify', ids=['6']),
+		TestCase(name='airbnb_nyc', ids=['0']),
+		TestCase(name='churn', ids=['0']),
+		TestCase(name='employee', ids=['9'])
+	]
+
+	for case in testcases:
+		url = 'https://github.com/lux-org/lux-datasets/blob/master/data/' + case.name + '.csv?raw=true'
+		df = pd.read_csv(url)
+
+		#rename col to str(0-index of col) to avoid reliance on regex
+		new_cols = [str(i) for i in np.arange(len(df.columns))]
+		col_map = dict(zip(new_cols, df.columns))
+		df.columns = new_cols
+		df.expire_metadata()
+		df.maintain_metadata()
+		for col in new_cols:
+			col_type = df.data_type_lookup[col]
+			if col in case.ids:
+				assert col_type == 'id', 'col %s in set %s not recognized as id' % (col_map[col], case.name)
+			else:
+				assert col_type != 'id', 'col %s in set %s misidentified as id' % (col_map[col], case.name)
+

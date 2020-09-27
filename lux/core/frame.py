@@ -300,7 +300,10 @@ class LuxDataFrame(pd.DataFrame):
 					self.data_type_lookup[attr] = "quantitative"
 			# Eliminate this clause because a single NaN value can cause the dtype to be object
 			elif self.dtypes[attr] == "object":
-				self.data_type_lookup[attr] = "nominal"
+				if check_if_id_like(self, attr):
+					self.data_type_lookup[attr] = "id"
+				else:
+					self.data_type_lookup[attr] = "nominal"
 			elif is_datetime_series(self.dtypes[attr]): #check if attribute is any type of datetime dtype
 				self.data_type_lookup[attr] = "temporal"
 		# for attr in list(df.dtypes[df.dtypes=="int64"].keys()):
