@@ -16,6 +16,7 @@ def test_check_cars():
 	assert df.data_type_lookup['Acceleration'] == 'quantitative'
 	assert df.data_type_lookup['Year'] == 'temporal'
 	assert df.data_type_lookup['Origin'] == 'nominal'
+
 def test_check_id():
 	df = pd.read_csv('https://github.com/lux-org/lux-datasets/blob/master/data/instacart_sample.csv?raw=true')
 	df._repr_html_()
