@@ -38,7 +38,8 @@ def test_check_id_no_regex():
 		TestCase(name='spotify', ids=['id']),
 		TestCase(name='airbnb_nyc', ids=['id']),
 		TestCase(name='churn', ids=['customerID']),
-		TestCase(name='employee', ids=['EmployeeNumber'])
+		TestCase(name='employee', ids=['EmployeeNumber']),
+		TestCase(name='absenteeism', ids=['ID'])
 	]
 
 	for case in testcases:
