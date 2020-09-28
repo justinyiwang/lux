@@ -35,10 +35,10 @@ def test_check_id_no_regex():
 		name: str
 		ids: List[str] #a set of column 0-indices that should recognizes as id
 	testcases = [
-		TestCase(name='spotify', ids=['6']),
-		TestCase(name='airbnb_nyc', ids=['0']),
-		TestCase(name='churn', ids=['0']),
-		TestCase(name='employee', ids=['9'])
+		TestCase(name='spotify', ids=['id']),
+		TestCase(name='airbnb_nyc', ids=['id']),
+		TestCase(name='churn', ids=['customerID']),
+		TestCase(name='employee', ids=['EmployeeNumber'])
 	]
 
 	for case in testcases:
@@ -53,7 +53,7 @@ def test_check_id_no_regex():
 		df.maintain_metadata()
 		for col in new_cols:
 			col_type = df.data_type_lookup[col]
-			if col in case.ids:
+			if col_map[col] in case.ids:
 				assert col_type == 'id', 'col %s in set %s not recognized as id' % (col_map[col], case.name)
 			else:
 				assert col_type != 'id', 'col %s in set %s misidentified as id' % (col_map[col], case.name)
